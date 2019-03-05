@@ -18,7 +18,15 @@ class PassportController extends Controller
     *
     * @return \Illuminate\Http\Response
     */
-    public function login(){        
+    public function login(Request $request){   
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',            
+            'password' => 'required',            
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->errors()], 401);            
+        }
+
         if(Auth::attempt(['username' => request('username'), 'password' => request('password')])){
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
